@@ -44,8 +44,13 @@ impl FloatVec<f32> for Point2 {
 }
 
 fn norm<Scalar: Float, Vec: FloatVec<Scalar>>(vec: &Vec) -> Scalar {
-    let mut result = Scalar::zero();
-    for i in 0..vec.len() {
+    // Check empty first to avoid adding 0 and achieve zero cost.
+    if vec.len() == 0 {
+        return Scalar::zero();
+    }
+    // Non-empty case.
+    let mut result = vec[0] * vec[0];
+    for i in 1..vec.len() {
         result = result + vec[i] * vec[i];
     }
     result.sqrt()

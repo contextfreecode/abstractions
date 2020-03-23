@@ -17,8 +17,13 @@ concept FloatVec =
 template<FloatVec Vec>
 auto norm(const Vec& vec) -> Scalar<Vec> {
     using Index = decltype(vec.size());
-    Scalar<Vec> result = 0;
-    for (Index i = 0; i < vec.size(); i += 1) {
+    // Check empty first to avoid adding 0 and achieve zero cost.
+    if (vec.size() == 0) {
+        return 0;
+    }
+    // Non-empty case.
+    Scalar<Vec> result = vec[0] * vec[0];
+    for (Index i = 1; i < vec.size(); i += 1) {
         result += vec[i] * vec[i];
     }
     return std::sqrt(result);
@@ -48,5 +53,5 @@ double norm_nd(const std::vector<double>& a) {
 
 int main() {
     std::cout << "norm: " << norm_nd({1, 2, 3}) << std::endl;
-    std::cout << "norm: " << norm2(3, 5) << std::endl;
+    std::cout << "norm: " << norm2(3, 4) << std::endl;
 }

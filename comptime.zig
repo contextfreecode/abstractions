@@ -33,8 +33,13 @@ fn isFloatVec(comptime Type: type) bool {
 fn norm(vec: var) @typeOf(vec).Child {
     const Vec = @typeOf(vec);
     assert(isFloatVec(Vec));
-    var i: Vec.Size = 0;
-    var result: Vec.Child = 0;
+    // Check empty first to avoid adding 0 and achieve zero cost.
+    if (vec.len() == 0) {
+        return 0;
+    }
+    // Non-empty case.
+    var i: Vec.Size = 1;
+    var result: Vec.Child = vec.at(0) * vec.at(0);
     while (i < vec.len()) : (i += 1) {
         result += vec.at(i) * vec.at(i);
     }
