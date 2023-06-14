@@ -6,5 +6,6 @@ Code has been updated since the video to achieve zero cost for the demonstrated 
 
 Examples currently include:
 - C++20
+- C3
 - Rust
 - Zig
