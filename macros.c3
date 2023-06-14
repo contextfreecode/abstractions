@@ -1,8 +1,7 @@
 module test;
 import std::io;
 import std::math;
-
-// This roughly follows the Zig implementation.
+import std::collections::list;
 
 struct Point2
 {
@@ -15,12 +14,17 @@ fn int Point2.len(Point2 this) => 2;
 
 macro bool is_float_vec($Type)
 {
-	$if $checks($Type{}[0]) || $checks($Type{}.len()):
+	var $temp = $Type{};
+	$if $checks($temp[0]):
 		$switch
-			$case $Type.kindof != STRUCT: return false;
-			$case @typekind($Type{}[0]) != FLOAT: return false;
-			$case !values::@is_int($Type{}.len()): return false;
-			$default: return true;
+			$case (@typekind($temp[0]) != FLOAT):
+				return false;
+			$case $checks($temp.len()):
+				return values::@is_int($temp.len());
+			$case $checks($temp.len):
+				return values::@is_int($temp.len);
+			$default:
+				return false;
 		$endswitch
 	$else
 		return false;
@@ -34,12 +38,16 @@ macro bool is_float_vec($Type)
  **/
 macro norm(vec)
 {
-	var $IndexType = $typeof(vec.len());
-	$IndexType size = vec.len();
+	var $Type = $typeof(vec[0]);
+	// We have some types with `vec.len` and some with `vec.len()`
+	$if $checks(vec.len()):
+		var size = vec.len();
+	$else
+		var size = vec.len;
+	$endif
 	if (!size) return 0;
-	var $Type = $typeof(vec.at(0));
 	$Type result = vec[0] * vec[0];
-	for ($IndexType i = 1; i < size; i++)
+	for ($typeof(size) i = 1; i < size; i++)
 	{
 		result += vec[i] * vec[i];
 	}
@@ -48,8 +56,17 @@ macro norm(vec)
 
 fn float norm2(float x, float y) => norm(Point2{x, y});
 
+def DoubleList = List<double>;
+def IntList = List<int>;
+
 fn void main()
 {
-	io::printfn("hey: %s %s", is_float_vec(Point2), is_float_vec(int));
-	io::printfn("norm: %s", norm2(3, 4));
+	io::printfn("hey: %s %s %s %s", is_float_vec(Point2), is_float_vec(int), is_float_vec(DoubleList), is_float_vec(IntList));
+	io::printfn("norm: %s %s %s %s", norm2(3, 4), norm(double[2] { 3, 4 }), norm(double[] { 3, 4 }), norm(double[<2>] { 3, 4 }));
+	DoubleList list;
+	list.append(3);
+	list.append(4);
+	list.append(12);
+	io::printfn("norm: %s", norm(list));
+	void[] abc;
 }
