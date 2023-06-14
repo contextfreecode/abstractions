@@ -68,5 +68,4 @@ fn void main()
 	list.append(4);
 	list.append(12);
 	io::printfn("norm: %s", norm(list));
-	void[] abc;
 }
