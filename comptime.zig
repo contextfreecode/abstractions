@@ -13,7 +13,7 @@ const Point2 = struct {
         return if (i == 0) self.x else self.y;
     }
 
-    pub fn len(self: Point2) Size {
+    pub fn len(_: Point2) Size {
         return 2;
     }
 };
@@ -51,6 +51,6 @@ export fn norm2(x: f32, y: f32) f32 {
 }
 
 pub fn main() void {
-    std.debug.warn("hey: {} {}\n", .{ isFloatVec(Point2), isFloatVec(i32) });
-    std.debug.warn("norm: {}\n", .{norm2(3, 4)});
+    std.debug.print("hey: {} {}\n", .{ isFloatVec(Point2), isFloatVec(i32) });
+    std.debug.print("norm: {}\n", .{norm2(3, 4)});
 }
