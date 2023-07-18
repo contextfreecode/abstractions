@@ -18,14 +18,14 @@ const Point2 = struct {
     }
 };
 
-fn isFloatVec(comptime T: type) bool {
-    if (!comptime trait.isContainer(T)) return false;
-    if (!comptime trait.hasFn("at")(T)) return false;
-    if (!comptime trait.hasFn("len")(T)) return false;
-    if (!comptime @hasDecl(T, "Child")) return false;
-    if (!comptime @hasDecl(T, "Size")) return false;
-    if (!comptime @typeInfo(T.Child) == .Float) return false;
-    if (!comptime @typeInfo(@TypeOf(T.len)).Fn.return_type == T.Size) return false;
+fn isFloatVec(comptime Type: type) bool {
+    if (!comptime trait.isContainer(Type)) return false;
+    if (!comptime trait.hasFn("at")(Type)) return false;
+    if (!comptime trait.hasFn("len")(Type)) return false;
+    if (!comptime @hasDecl(Type, "Child")) return false;
+    if (!comptime @hasDecl(Type, "Size")) return false;
+    if (!comptime @typeInfo(Type.Child) == .Float) return false;
+    if (!comptime @typeInfo(@TypeOf(Type.len)).Fn.return_type == Type.Size) return false;
     return true;
 }
 
