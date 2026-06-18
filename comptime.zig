@@ -1,4 +1,3 @@
-const TypeId = @import("builtin").TypeId;
 const std = @import("std");
 const assert = std.debug.assert;
 const trait = std.meta.trait;
@@ -14,7 +13,7 @@ const Point2 = struct {
         return if (i == 0) self.x else self.y;
     }
 
-    pub fn len(self: Point2) Size {
+    pub fn len(_: Point2) Size {
         return 2;
     }
 };
@@ -25,13 +24,13 @@ fn isFloatVec(comptime Type: type) bool {
     if (!comptime trait.hasFn("len")(Type)) return false;
     if (!comptime @hasDecl(Type, "Child")) return false;
     if (!comptime @hasDecl(Type, "Size")) return false;
-    if (!comptime @typeId(Type.Child) == TypeId.Float) return false;
-    if (!comptime @typeOf(Type.len).ReturnType == Type.Size) return false;
+    if (!comptime @typeInfo(Type.Child) == .Float) return false;
+    if (!comptime @typeInfo(@TypeOf(Type.len)).Fn.return_type == Type.Size) return false;
     return true;
 }
 
-fn norm(vec: var) @typeOf(vec).Child {
-    const Vec = @typeOf(vec);
+fn norm(vec: anytype) @TypeOf(vec).Child {
+    const Vec = @TypeOf(vec);
     assert(isFloatVec(Vec));
     // Check empty first to avoid adding 0 and achieve zero cost.
     if (vec.len() == 0) {
@@ -52,6 +51,6 @@ export fn norm2(x: f32, y: f32) f32 {
 }
 
 pub fn main() void {
-    std.debug.warn("hey: {} {}\n", isFloatVec(Point2), isFloatVec(i32));
-    std.debug.warn("norm: {}\n", norm2(3, 4));
+    std.debug.print("hey: {} {}\n", .{ isFloatVec(Point2), isFloatVec(i32) });
+    std.debug.print("norm: {}\n", .{norm2(3, 4)});
 }
